@@ -11,26 +11,32 @@ const getLocalStorageValue = () => {
   return { formData };
 };
 
-const formValues = getLocalStorageValue().formData;
 
 form.addEventListener('input', evt => {
-  formValues[evt.target.name] = evt.target.value.trim('');
+  const existingData = getLocalStorageValue().formData;
+  existingData[evt.target.name] = evt.target.value.trim();
 
-  const userDataString = JSON.stringify(formValues);
+  const userDataString = JSON.stringify(existingData);
   localStorage.setItem(localStorageKey, userDataString);
 });
 
 form.addEventListener('submit', evt => {
   evt.preventDefault();
 
-  if (!formValues?.email || !formValues?.message) {
+  if (
+    !getLocalStorageValue().formData?.email ||
+    !getLocalStorageValue().formData?.message
+  ) {
     alert('Please fill in all fields of the form!');
   } else {
-    console.log(formValues);
+    console.log({
+      email: getLocalStorageValue().formData?.email,
+      message: getLocalStorageValue().formData?.message,
+    });
     localStorage.removeItem(localStorageKey);
     form.reset();
   }
 });
 
-form.elements.message.value = formValues?.message || '';
-form.elements.email.value = formValues?.email || '';
+form.elements.message.value = getLocalStorageValue().formData?.message || '';
+form.elements.email.value = getLocalStorageValue().formData?.email || '';
